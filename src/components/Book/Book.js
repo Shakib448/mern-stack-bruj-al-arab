@@ -8,28 +8,42 @@ import {
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 import { Button } from "@material-ui/core";
+import Bookings from "../Bookings/Bookings";
 
 const Book = () => {
   const { bedType } = useParams();
   const [loggedInUser, setLoggedInUser] = useContext(UserContext);
-  // The first commit of Material-UI
+
   const [selectedDate, setSelectedDate] = useState({
     checkIn: new Date(),
     checkOut: new Date(),
   });
 
+  console.log(selectedDate);
   const handleCheckInDate = (date) => {
     const newDate = { ...selectedDate };
     newDate.checkIn = date;
-    setSelectedDate(date);
+    setSelectedDate(newDate);
   };
   const handleCheckOutDate = (date) => {
     const newDate = { ...selectedDate };
     newDate.checkOut = date;
-    setSelectedDate(date);
+    setSelectedDate(newDate);
   };
 
-  const handleBooking = () => {};
+  const handleBooking = () => {
+    const newBooking = { ...loggedInUser, ...selectedDate };
+    console.log("I ma handleBooking", newBooking);
+    fetch("http://localhost:5000/addBooking", {
+      method: "POST",
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify(newBooking),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+      });
+  };
 
   return (
     <div style={{ textAlign: "center" }}>
@@ -38,17 +52,17 @@ const Book = () => {
         Hello {loggedInUser.name} Let's book a {bedType} Room.
       </h1>
       <p>
-        Want a <Link to="/home">different room?</Link> import 'date-fns';
+        Want a <Link to="/home">different room?</Link>
       </p>
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <Grid container justify="space-around">
           <KeyboardDatePicker
             disableToolbar
             variant="inline"
-            format="MM/dd/yyyy"
+            format="dd/MM/yyyy"
             margin="normal"
             id="date-picker-inline"
-            label="Check In picker inline"
+            label="Check In"
             value={selectedDate.checkIn}
             onChange={handleCheckInDate}
             KeyboardButtonProps={{
@@ -58,8 +72,8 @@ const Book = () => {
           <KeyboardDatePicker
             margin="normal"
             id="date-picker-dialog"
-            label="Check Out picker dialog"
-            format="MM/dd/yyyy"
+            label="Check Out"
+            format="dd/MM/yyyy"
             value={selectedDate.checkOut}
             onChange={handleCheckOutDate}
             KeyboardButtonProps={{
@@ -67,10 +81,15 @@ const Book = () => {
             }}
           />
         </Grid>
-        <Button onClick={handleBooking} variant="contained" color="primary">
+        <Button
+          onClick={() => handleBooking()}
+          variant="contained"
+          color="primary"
+        >
           Book Now
         </Button>
       </MuiPickersUtilsProvider>
+      <Bookings />
     </div>
   );
 };
