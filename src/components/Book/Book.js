@@ -19,7 +19,6 @@ const Book = () => {
     checkOut: new Date(),
   });
 
-  console.log(selectedDate);
   const handleCheckInDate = (date) => {
     const newDate = { ...selectedDate };
     newDate.checkIn = date;
@@ -33,7 +32,6 @@ const Book = () => {
 
   const handleBooking = () => {
     const newBooking = { ...loggedInUser, ...selectedDate };
-    console.log("I ma handleBooking", newBooking);
     fetch("http://localhost:5000/addBooking", {
       method: "POST",
       headers: { "Content-type": "application/json" },

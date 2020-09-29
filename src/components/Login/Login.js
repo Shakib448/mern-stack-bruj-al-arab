@@ -29,6 +29,7 @@ const Login = () => {
           email: email,
         };
         setLoggedInUser(signedInUser);
+        storeAuthToken();
         history.replace(from);
       })
       .catch((error) => {
@@ -40,6 +41,18 @@ const Login = () => {
         // The firebase.auth.AuthCredential type that was used.
         const credential = error.credential;
         // ...
+      });
+  };
+
+  const storeAuthToken = () => {
+    firebase
+      .auth()
+      .currentUser.getIdToken(/* forceRefresh */ true)
+      .then(function (idToken) {
+        sessionStorage.setItem("authToken", idToken);
+      })
+      .catch(function (error) {
+        // Handle error
       });
   };
 
